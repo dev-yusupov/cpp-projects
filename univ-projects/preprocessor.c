@@ -1,19 +1,18 @@
 #include <stdio.h>
-#define MESSAGE "Google"
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
 int main() {
+    int x = 10;
+    int y = 12;
+
     #ifdef DEBUG
-        printf("Debug mode is on! \n");
-    
-    #else
-        printf("Debug mode is off! \'\' \n");
-    
-    #endif
+        #define DEBUG_PRINTmsg
 
-    printf( MESSAGE );
+    int max_value = MAX(x, y);
 
-    printf("Number: \377");
+    printf("%d\n", max_value);
 
     return 0;
 }
