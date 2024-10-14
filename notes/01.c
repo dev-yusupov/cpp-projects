@@ -10,5 +10,10 @@ int main() {
     int** ptp1 = &ptr1;
     int*** ptp2 = &ptp1;
 
+    ** ptp1 = 20;
+    
+    printf("x=%d\n", x);
+    printf("ptr1=%d", *ptr1);
+
     return 0;
 }
