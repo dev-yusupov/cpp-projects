@@ -39,4 +39,4 @@ At the end we get
 0 10 20 30 40 50 60 70 80 90
 ```
 
-Compiler delared `20 bytes` for `arr` which will be required for program execution. You can see the C code by clicking the [link](./example.c)
+Compiler delared `20 bytes` for `arr` which will be required for program execution. You can see the C code by clicking the [link](./examples/static_allocation.c)
