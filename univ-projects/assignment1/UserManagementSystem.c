@@ -6,11 +6,11 @@
 
 #include "UserManagementSystem.h"
 
-user_t* init() {
-    user_t* new_user = (user_t*)malloc(sizeof(user_t));       // Allocate a memory for a new user
+user_t* init(user_t* new_user) {
 
     snprintf(new_user->name, sizeof(new_user->name), "root"); 
     new_user->age = 33;
+    new_user->ID = 0;
     new_user->groups[0] = root_user;
     new_user->groups[1] = system_users;
     new_user->groups[2] = operator_users;
@@ -28,23 +28,58 @@ int count_users(user_t* root) {
         return 0;
     }
 
-    int count = 1 + count_users(root->nextUser);
-
-    return count;
+    return 1 + count_users(root->nextUser);
 }
 
 void print_user(user_t* root, int ID) {
-    if (root->ID == ID) {
-        printf("Name: %s \n Age: %d \n ID: %d", root->name, root->age, root->ID);
+    while (root != NULL) {
+        if (root->ID == ID) {
+            printf("Name: %s\n", root->name);
+            printf("Age: %d\n", root->age);
+            printf("ID: %d\n", root->ID);
 
-        int length = sizeof(root->groups) / sizeof(Groups);
+            printf("Groups: ");
+            bool first_group = true;
+            for (int i = 0; i < MAXIMUM_GROUPS; i++) {
+                if (root->groups[i] != -1) {
+                    if (!first_group) {
+                        printf(", ");
+                    }
+                    // Print group name based on its enum value
+                    switch (root->groups[i]) {
+                        case root_user:
+                            printf("root_user");
+                            break;
+                        case system_users:
+                            printf("system_users");
+                            break;
+                        case operator_users:
+                            printf("operator_users");
+                            break;
+                        case observer_users:
+                            printf("observer_users");
+                            break;
+                        default:
+                            printf("Unknown Group");
+                            break;
+                    }
+                    first_group = false;
+                }
+            }
 
-        for (int i = 0; i < length; i++) {
-            printf("User group: %d", root->groups[i]);
+            if (root->canBedeleted) {
+                printf("\nThis user can be deleted.\n");
+            } else {
+                printf("\nThis user cannot be deleted.\n");
+            }
+
+            return;
         }
+
+        root = root->nextUser;
     }
 
-    return print_user(root->nextUser, ID);
+    printf("Error: User with ID %d not found.\n", ID);
 }
 
 user_t* create_user(user_t* root, string name, int age, int ID, Groups groups[], int lengthOfGroups) {
@@ -61,13 +96,17 @@ user_t* create_user(user_t* root, string name, int age, int ID, Groups groups[],
 
     user_t* new_user = (user_t*)malloc(sizeof(user_t)); // Allocate a new memory in heap
 
-    snprintf(new_user->name, sizeof(new_user->name), name);
+    snprintf(new_user->name, sizeof(new_user->name), "%s", name);
     new_user->age = age;
     new_user->ID = ID;
-    new_user->groups[lengthOfGroups] = groups;
+
+    for (int i = 0; i < lengthOfGroups; i++) {
+        new_user->groups[i] = groups[i];
+    }
+
     new_user->canBedeleted = true;
     new_user->nextUser = NULL;
-    
+
     root->nextUser = new_user;
 
     return new_user;
@@ -88,7 +127,7 @@ user_t* modify_user(user_t* root, int ID, string newName, int newAge, Groups new
             }
 
             printf("User updated successfully!\n");
-            return;
+            return NULL;
         }
 
         root = root->nextUser;
@@ -158,20 +197,23 @@ void add_group(user_t* root, int ID, Groups group) {
     printf("Error: User with ID %d not found.\n", ID);
 }
 
-void print_system(user_t* root)
-{
+void print_system(user_t* root) {
     user_t* current = root;
 
     while (current != NULL) {
-        printf("Name: %s", current->name);
-        printf("Age: %d", current->age);
-        printf("ID: %d", current->ID);
+        printf("Name: %s\n", current->name);
+        printf("Age: %d\n", current->age);
+        printf("ID: %d\n", current->ID);
 
         printf("Groups: ");
 
+        bool first_group = true;
         for (int i = 0; i < MAXIMUM_GROUPS; i++) {
             if (current->groups[i] != -1) {
-                
+                if (!first_group) {
+                    printf(", ");
+                }
+                // Print group name based on its enum value
                 switch (current->groups[i]) {
                     case root_user:
                         printf("root_user");
@@ -189,14 +231,19 @@ void print_system(user_t* root)
                         printf("Unknown Group");
                         break;
                 }
+                first_group = false;
             }
         }
 
-        if (root->canBedeleted) {
-            printf("This user can be deleted.\n");
+        if (current->canBedeleted) {
+            printf("\nThis user can be deleted.\n");
         } else {
-            printf("This user cannot be deleted.\n");
+            printf("\nThis user cannot be deleted.\n");
         }
+
+        printf("\n");
+
+        current = current->nextUser;
     }
 }
 
@@ -248,7 +295,7 @@ void export_system(user_t* root, const char* filename) {
 
         fprintf(file, "]\n");
 
-        current = current->nextUser;  // Move to the next user in the list
+        current = current->nextUser;
     }
 
     fclose(file);  // Close the file after writing
