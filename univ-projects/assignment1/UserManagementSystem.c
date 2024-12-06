@@ -97,3 +97,160 @@ user_t* modify_user(user_t* root, int ID, string newName, int newAge, Groups new
     printf("Error: User with ID %d not found.\n", ID);
 }
 
+int delete_user(user_t** root, int ID) {
+    user_t* current = *root;
+    user_t* previous = NULL;
+
+    while (current != NULL) {
+        if (current->ID == ID) {
+            if (previous == NULL) {
+                *root = current->nextUser;
+            } else {
+                previous->nextUser = current->nextUser; 
+            }
+
+            free(current);
+
+            printf("User with ID %d deleted successfully.\n", ID);
+            return 1;
+        }
+
+        previous = current;
+        current = current->nextUser;
+    }
+
+    // If no user with the given ID is found
+    printf("Error: User with ID %d not found.\n", ID);
+    return 0;  // Return failure
+}
+
+
+void add_group(user_t* root, int ID, Groups group) {
+    user_t* current = root;
+
+    while (current != NULL) {
+        if (current->ID == ID) {
+            int group_count = 0;
+            for (int i = 0; i < MAXIMUM_GROUPS; i++) {
+                if (current->groups[i] != -1) {
+                    group_count++;
+                }
+            }
+
+            if (group_count >= MAXIMUM_GROUPS) {
+                fprintf(stderr, "Error: User with ID %d already has the maximum number of groups (4).\n", ID);
+                return;
+            }
+
+            for (int i = 0; i < MAXIMUM_GROUPS; i++) {
+                if (current->groups[i] == -1) {
+                    current->groups[i] = group;
+                    printf("Group %d added to user %s (ID: %d).\n", group, current->name, current->ID);
+                    return;
+                }
+            }
+        }
+
+        current = current->nextUser;
+    }
+
+    // If no user with the given ID was found
+    printf("Error: User with ID %d not found.\n", ID);
+}
+
+void print_system(user_t* root)
+{
+    user_t* current = root;
+
+    while (current != NULL) {
+        printf("Name: %s", current->name);
+        printf("Age: %d", current->age);
+        printf("ID: %d", current->ID);
+
+        printf("Groups: ");
+
+        for (int i = 0; i < MAXIMUM_GROUPS; i++) {
+            if (current->groups[i] != -1) {
+                
+                switch (current->groups[i]) {
+                    case root_user:
+                        printf("root_user");
+                        break;
+                    case system_users:
+                        printf("system_users");
+                        break;
+                    case operator_users:
+                        printf("operator_users");
+                        break;
+                    case observer_users:
+                        printf("observer_users");
+                        break;
+                    default:
+                        printf("Unknown Group");
+                        break;
+                }
+            }
+        }
+
+        if (root->canBedeleted) {
+            printf("This user can be deleted.\n");
+        } else {
+            printf("This user cannot be deleted.\n");
+        }
+    }
+}
+
+void export_system(user_t* root, const char* filename) {
+    FILE* file = fopen(filename, "w");  // Open the file for writing
+
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open file %s for writing.\n", filename);
+        return;
+    }
+
+    // Write header
+    fprintf(file, "User ID   User Name       Age   Groups\n");
+
+    // Traverse the linked list of users
+    user_t* current = root;
+    while (current != NULL) {
+        // Write the user details to the file
+        fprintf(file, "%-9d %-15s %-4d [", current->ID, current->name, current->age);
+
+        // Write the groups the user belongs to
+        bool first_group = true;
+        for (int i = 0; i < MAXIMUM_GROUPS; i++) {
+            if (current->groups[i] != -1) {  // Assuming -1 indicates an empty slot in the groups array
+                if (!first_group) {
+                    fprintf(file, ", ");
+                }
+                // Print group name based on its enum value
+                switch (current->groups[i]) {
+                    case root_user:
+                        fprintf(file, "root_user");
+                        break;
+                    case system_users:
+                        fprintf(file, "system_users");
+                        break;
+                    case operator_users:
+                        fprintf(file, "operator_users");
+                        break;
+                    case observer_users:
+                        fprintf(file, "observer_users");
+                        break;
+                    default:
+                        fprintf(file, "Unknown Group");
+                        break;
+                }
+                first_group = false;
+            }
+        }
+
+        fprintf(file, "]\n");
+
+        current = current->nextUser;  // Move to the next user in the list
+    }
+
+    fclose(file);  // Close the file after writing
+    printf("System data successfully exported to %s.\n", filename);
+}
