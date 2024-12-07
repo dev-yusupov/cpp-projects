@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "student.h"
+
+#include "student/student.h"
 
 student_t* root_student;
 
@@ -30,7 +31,7 @@ void display_info() {
 
 int main() {
     program_info();
-    
+
     root_student = (student_t*)malloc(sizeof(student_t)); // Allocate memory for root_student
     init(root_student, "John Doe", 1, (int[]){90, 80, 70, 60}, 4); // Initialize root_student with name "John Doe", ID 1, and grades 90, 80, 70, 60
 
