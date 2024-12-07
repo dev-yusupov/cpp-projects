@@ -75,24 +75,32 @@ student_t* add_student(student_t* root_student, string name, int student_id)
 {
     student_t* current_student = root_student;
 
-    while (current_student->next != NULL)
+    while (current_student != NULL)
     {
+        if (current_student->ID == student_id)
+        {
+            log_error("Student with provided ID already exists.", ERR_INVALID_INPUT);
+            return NULL; // Return NULL to indicate failure
+        }
+
+        if (current_student->next == NULL)
+            break;
+
         current_student = current_student->next;
     }
 
-    student_t* previous_student = current_student;
     student_t* new_student = (student_t*)malloc(sizeof(student_t));
 
-    snprintf(new_student->name, sizeof(current_student->name), "%s", name);
+    snprintf(new_student->name, sizeof(new_student->name), "%s", name);
     new_student->ID = student_id;
     new_student->next = NULL;
     new_student->num_grades = 0;
     new_student->capacity = 5;
-    new_student->grades = (int*)malloc(current_student->capacity * sizeof(int));
+    new_student->grades = (int*)malloc(new_student->capacity * sizeof(int));
 
-    previous_student->next = new_student;
+    current_student->next = new_student;
 
-    return current_student;
+    return new_student;
 }
 
 /**
@@ -154,6 +162,8 @@ void add_grade(student_t* root, int student_id, int grade) {
             }
 
             log_error("Grade successfully added.", SUCCESS);
+
+            return;
         }
 
         current_student = current_student->next;

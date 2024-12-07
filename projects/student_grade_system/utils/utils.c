@@ -34,6 +34,9 @@ void log_error(const char *message, error_code code)
     case ERR_FILE_IO:
         fprintf(stderr, "File I/O error: %s\n", message);
         break;
+    case SUCCESS:
+        fprintf(stderr, "Success: %s\n", message);
+        break;
     default:
         fprintf(stderr, "Unknown error: %s\n", message);
         break;
