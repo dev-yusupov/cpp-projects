@@ -19,7 +19,7 @@ void init(student_t* root_student, string name, int ID, int grades[], int length
 // list students
 void list_students(student_t* root);
 // add student
-student_t* add_student(student_t* root, string name, int ID);
+student_t* add_student(student_t* root_student, string name, int student_id);
 // modify student with ID
 void modify_student(student_t* root, int ID, string new_name);
 // add grade
