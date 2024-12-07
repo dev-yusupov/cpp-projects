@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "student/student.h"
+#include "include/student.h"
 
 student_t* root_student;
 

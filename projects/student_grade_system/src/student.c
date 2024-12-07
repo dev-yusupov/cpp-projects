@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #include "student.h"
-#include "utils/utils.h"
+#include "utils.h"
 
 /**
  * @brief Initializes a student with the provided information.
@@ -221,7 +221,7 @@ void display_student_info(student_t* root, int student_id) {
             printf("Grades: ");
             for (int i = 0; i < current_student->num_grades; i++)
             {
-                printf("%d ", current_student->grades[i]);
+                printf("%d, ", current_student->grades[i]);
             }
             printf("\n");
             printf("Average Grade: %.2f\n", average_grade(current_student->grades, current_student->num_grades));
