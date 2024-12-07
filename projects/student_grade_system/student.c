@@ -94,3 +94,132 @@ student_t* add_student(student_t* root_student, string name, int student_id)
 
     return current_student;
 }
+
+/**
+ * @brief Modifies a student's name with the provided ID.
+ * 
+ * This function modifies a student's name with the provided ID.
+ * 
+ * @param root The pointer to the root student in memory.
+ * @param ID The ID of the student.
+ * @param new_name The new name of the student.
+ * @return void
+ */
+void modify_student(student_t* root, int student_id, string new_name) {
+    student_t* current_student = root;
+
+    while (current_student != NULL)
+    {
+        if (current_student->ID == student_id)
+        {
+            snprintf(current_student->name, sizeof(current_student->name), "%s", new_name);
+            
+            log_error("Student name successfully modified.", SUCCESS);
+        }
+
+        current_student = current_student->next;
+    }
+
+    log_error("Student not found.", ERR_STUDENT_NOT_FOUND);
+}
+
+/**
+ * @brief Adds a grade to a student with the provided student ID.
+ * 
+ * This function adds a grade to array of grades of a student with the provided ID.
+ * 
+ * @param root The pointer to the root student in memory.
+ * @param ID The ID of the student.
+ * @param grade The grade to add.
+ * @return void
+ */
+void add_grade(student_t* root, int student_id, int grade) {
+    student_t* current_student = root;
+
+    while (current_student != NULL)
+    {
+        if (current_student->ID == student_id)
+        {
+            if (current_student->num_grades < current_student->capacity)
+            {
+                current_student->grades[current_student->num_grades] = grade;
+                current_student->num_grades++;
+            }
+            else
+            {
+                current_student->capacity += 5;
+                current_student->grades = (int*)realloc(current_student->grades, current_student->capacity * sizeof(int));
+                current_student->grades[current_student->num_grades] = grade;
+                current_student->num_grades++;
+            }
+
+            log_error("Grade successfully added.", SUCCESS);
+        }
+
+        current_student = current_student->next;
+    }
+
+    log_error("Student with provided ID could not found.", ERR_STUDENT_NOT_FOUND);
+}
+
+/**
+ * @brief Shows the average grade of a student with the provided student ID.
+ * 
+ * This function shows the average grade of a student with the provided student ID.
+ * 
+ * @param root The pointer to the root student in memory.
+ * @param ID The ID of the student.
+ * @return The average grade of the student.
+ */
+
+float show_average_grade(student_t* root, int student_id) {
+    student_t* current_student = root;
+
+    while (current_student != NULL)
+    {
+        if (current_student->ID == student_id)
+        {
+            return average_grade(current_student->grades, current_student->num_grades);
+        }
+
+        current_student = current_student->next;
+    }
+    
+    log_error("Student with provided ID could not found.", ERR_STUDENT_NOT_FOUND);
+
+    return 0.0f;
+}
+
+/**
+ * @brief Displays the information of a student with the provided student ID.
+ * 
+ * This function displays the information of a student with the provided student ID.
+ * 
+ * @param root The pointer to the root student in memory.
+ * @param ID The ID of the student.
+ * @return void
+ */
+void display_student_info(student_t* root, int student_id) {
+    student_t* current_student = root;
+
+    while (current_student != NULL)
+    {
+        if (current_student->ID == student_id)
+        {
+            printf("Name: %s\n", current_student->name);
+            printf("ID: %d\n", current_student->ID);
+            printf("Grades: ");
+            for (int i = 0; i < current_student->num_grades; i++)
+            {
+                printf("%d ", current_student->grades[i]);
+            }
+            printf("\n");
+            printf("Average Grade: %.2f\n", average_grade(current_student->grades, current_student->num_grades));
+            return;
+        }
+
+        current_student = current_student->next;
+    }
+
+    log_error("Student with provided ID could not found.", ERR_STUDENT_NOT_FOUND);
+}

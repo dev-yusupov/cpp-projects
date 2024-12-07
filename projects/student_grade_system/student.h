@@ -21,12 +21,12 @@ void list_students(student_t* root);
 // add student
 student_t* add_student(student_t* root_student, string name, int student_id);
 // modify student with ID
-void modify_student(student_t* root, int ID, string new_name);
+void modify_student(student_t* root, int student_id, string new_name);
 // add grade
-void add_grade(student_t* root, int ID, int grade);
+void add_grade(student_t* root, int student_id, int grade);
 // show average grade
-float show_average_grade(student_t* root, int ID);
+float show_average_grade(student_t* root, int student_id);
 // display student info
-void display_student_info(student_t* root, int ID);
+void display_student_info(student_t* root, int student_id);
 
 #endif
