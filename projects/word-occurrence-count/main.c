@@ -52,8 +52,10 @@ int main(int argc, char *argv[])
 
     fclose(file);
 
+    qsort(array->words, array->size, sizeof(word_t), compare_by_occurrence);
+
     printf("Words and their occurrences:\n");
-    for (int i = 0; i < array->size; i++)
+    for (int i = 0; i < 5; i++)
     {
         printf("%s: %u\n", array->words[i].word, array->words[i].occurrence);
     }

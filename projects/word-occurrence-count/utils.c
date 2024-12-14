@@ -85,3 +85,24 @@ void free_array(words_array* array)
     free(array->words);
     free(array);
 }
+
+int compare_by_occurrence(const void* a, const void* b)
+{
+    const word_t* word1 = (const word_t*)a;
+    const word_t* word2 = (const word_t*)b;
+
+    if (word1->occurrence < word2->occurrence)
+        return 1;
+    else if (word1->occurrence > word2->occurrence)
+        return -1;
+    else
+        return 0;
+}
+
+int compare_alphabetically(const void* a, const void* b)
+{
+    const word_t* word1 = (const word_t*)a;
+    const word_t* word2 = (const word_t*)b;
+
+    return strcmp(word1->word, word2->word);
+}

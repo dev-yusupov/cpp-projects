@@ -30,4 +30,8 @@ word_t* add_word(words_array* array, char* word);
 
 void free_array(words_array* array);
 
+int compare_by_occurrence(const void* a, const void* b);
+
+int compare_alphabetically(const void* a, const void* b);
+
 #endif
